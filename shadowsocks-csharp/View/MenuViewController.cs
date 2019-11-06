@@ -15,6 +15,7 @@ using Shadowsocks.Util;
 using System.Linq;
 using Microsoft.Win32;
 using System.Windows.Interop;
+using System.IO;
 
 namespace Shadowsocks.View
 {
@@ -297,7 +298,8 @@ namespace Shadowsocks.View
                     new MenuItem("-"),
                     CreateMenuItem("Share Server Config...", new EventHandler(this.QRCodeItem_Click)),
                     CreateMenuItem("Scan QRCode from Screen...", new EventHandler(this.ScanQRCodeItem_Click)),
-                    CreateMenuItem("Import URL from Clipboard...", new EventHandler(this.ImportURLItem_Click))
+                    CreateMenuItem("Import URL from Clipboard...", new EventHandler(this.ImportURLItem_Click)),
+                    CreateMenuItem("Import Servers from file...", new EventHandler(this.ImportServersItem_Click))
                 }),
                 CreateMenuGroup("PAC ", new MenuItem[] {
                     this.localPACItem = CreateMenuItem("Local PAC", new EventHandler(this.LocalPACItem_Click)),
@@ -807,6 +809,25 @@ namespace Shadowsocks.View
             if (success)
             {
                 ShowConfigForm();
+            }
+        }
+
+        private void ImportServersItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog()
+            {
+                DefaultExt = "Text Documents(*.txt)",
+                InitialDirectory = Environment.CurrentDirectory,
+                Title = "Import from file",
+                CheckFileExists = true
+            };
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                var success = controller.AddServerByFile(Path.GetFullPath(dialog.FileName));
+                if (success)
+                {
+                    ShowConfigForm();
+                }
             }
         }
 

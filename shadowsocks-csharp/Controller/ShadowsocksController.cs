@@ -214,6 +214,32 @@ namespace Shadowsocks.Controller
             }
         }
 
+        public bool AddServerByFile(string filePath)
+        {
+            try
+            {
+                if (filePath.IsNullOrEmpty() || filePath.IsWhiteSpace())
+                    return false;
+
+                var servers = Server.GetServersFromFile(filePath);
+                if (servers == null || servers.Count == 0)
+                    return false;
+
+                foreach (var server in servers)
+                {
+                    _config.configs.Add(server);
+                }
+                _config.index = _config.configs.Count - 1;
+                SaveConfig(_config);
+                return true;
+            }
+            catch (Exception e)
+            {
+                Logging.LogUsefulException(e);
+                return false;
+            }
+        }
+
         public void ToggleEnable(bool enabled)
         {
             _config.enabled = enabled;

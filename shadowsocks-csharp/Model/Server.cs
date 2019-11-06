@@ -5,6 +5,7 @@ using System.Text;
 using System.Web;
 using Shadowsocks.Controller;
 using System.Text.RegularExpressions;
+using System.IO;
 
 namespace Shadowsocks.Model
 {
@@ -184,6 +185,19 @@ namespace Shadowsocks.Model
                 }
             }
             return servers;
+        }
+
+        public static List<Server> GetServersFromFile(string filePath)
+        {
+            using (StreamReader reader = new StreamReader(filePath, Encoding.Default))
+            {
+                string ssURL = reader.ReadToEnd();
+                while (!ssURL.IsNullOrWhiteSpace())
+                {
+                    return GetServers(ssURL);
+                }
+            }
+            return null;
         }
 
         public string Identifier()
