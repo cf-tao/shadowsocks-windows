@@ -214,14 +214,14 @@ namespace Shadowsocks.Controller
             }
         }
 
-        public bool AddServerByFile(string filePath)
+        public bool AddServerByFile(string filePath, bool fromJson = true)
         {
             try
             {
                 if (filePath.IsNullOrEmpty() || filePath.IsWhiteSpace())
                     return false;
 
-                var servers = Server.GetServersFromFile(filePath);
+                var servers = fromJson ? Server.GetServersFromJson(filePath) : Server.GetServersFromFile(filePath);
                 if (servers == null || servers.Count == 0)
                     return false;
 

@@ -299,7 +299,9 @@ namespace Shadowsocks.View
                     CreateMenuItem("Share Server Config...", new EventHandler(this.QRCodeItem_Click)),
                     CreateMenuItem("Scan QRCode from Screen...", new EventHandler(this.ScanQRCodeItem_Click)),
                     CreateMenuItem("Import URL from Clipboard...", new EventHandler(this.ImportURLItem_Click)),
-                    CreateMenuItem("Import Servers from file...", new EventHandler(this.ImportServersItem_Click))
+                    CreateMenuItem("Import Servers from file...", new EventHandler(this.ImportServersItem_Click)),
+                    new MenuItem("-"),
+                    CreateMenuItem("Add servers from subscribe(ssmgr)", new EventHandler(this.ImportConfigItem_Click))
                 }),
                 CreateMenuGroup("PAC ", new MenuItem[] {
                     this.localPACItem = CreateMenuItem("Local PAC", new EventHandler(this.LocalPACItem_Click)),
@@ -819,6 +821,25 @@ namespace Shadowsocks.View
                 DefaultExt = "Text Documents(*.txt)",
                 InitialDirectory = Environment.CurrentDirectory,
                 Title = "Import from file",
+                CheckFileExists = true
+            };
+            if (dialog.ShowDialog() == DialogResult.OK)
+            {
+                var success = controller.AddServerByFile(Path.GetFullPath(dialog.FileName), false);
+                if (success)
+                {
+                    ShowConfigForm();
+                }
+            }
+        }
+
+        private void ImportConfigItem_Click(object sender, EventArgs e)
+        {
+            OpenFileDialog dialog = new OpenFileDialog()
+            {
+                DefaultExt = "JSON Documents(*.json)",
+                InitialDirectory = Environment.CurrentDirectory,
+                Title = "Import from config file",
                 CheckFileExists = true
             };
             if (dialog.ShowDialog() == DialogResult.OK)

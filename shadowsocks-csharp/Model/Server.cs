@@ -6,6 +6,8 @@ using System.Web;
 using Shadowsocks.Controller;
 using System.Text.RegularExpressions;
 using System.IO;
+using Newtonsoft.Json;
+using System.Linq;
 
 namespace Shadowsocks.Model
 {
@@ -187,6 +189,12 @@ namespace Shadowsocks.Model
             return servers;
         }
 
+        public static List<Server> GetServersFromConfig(string ssURL)
+        {
+            var result = JsonConvert.DeserializeObject<ServersConfig>(ssURL);
+            return result.servers.ToList();
+        }
+
         public static List<Server> GetServersFromFile(string filePath)
         {
             using (StreamReader reader = new StreamReader(filePath, Encoding.Default))
@@ -195,6 +203,19 @@ namespace Shadowsocks.Model
                 while (!ssURL.IsNullOrWhiteSpace())
                 {
                     return GetServers(ssURL);
+                }
+            }
+            return null;
+        }
+
+        public static List<Server> GetServersFromJson(string filePath)
+        {
+            using (StreamReader reader = new StreamReader(filePath, Encoding.Default))
+            {
+                string ssURL = reader.ReadToEnd();
+                if (!ssURL.IsNullOrWhiteSpace())
+                {
+                    return GetServersFromConfig(ssURL);
                 }
             }
             return null;
